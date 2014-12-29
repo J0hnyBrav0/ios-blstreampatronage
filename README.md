@@ -1,1 +1,1 @@
-zadanie Podstawowe i zadanie Dodatkowe w dwóch osobnych playground'ach.
+zadanie 1 i zadanie 2.
