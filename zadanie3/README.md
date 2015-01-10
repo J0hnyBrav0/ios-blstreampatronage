@@ -1,5 +1,12 @@
-zmieniłem implementacje klasy PointOFInterest zgodniez uwagami do pierwszego zadania ( nie dziedzice już po protokołach)
 
-wykorzystałem ponadto extension z zadania 2 oraz dopisałem nowy: deg2rad().
 
-closure w metodzie filter napisałem tak, aby pominąc w wynikowej tablicy siedzibę BLStream'u.
+/* * */
+Upieram się przy typie Double zamiast Float. 
+/* * */
+
+
+Zmieniłem implementację klasy 'PointOfInterest', zgodnie z uwagami do pierwszego zadania ( nie dziedziczę już po protokołach).
+
+Wykorzystałem ponadto extension z zadania 2 oraz dopisałem nowy: deg2rad().
+
+Closure w metodzie filter napisałem tak, aby pominąć w wynikowej tablicy siedzibę BLStream'u.
