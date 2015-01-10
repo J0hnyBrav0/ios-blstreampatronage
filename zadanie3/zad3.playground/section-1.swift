@@ -4,78 +4,6 @@ import UIKit
 import Foundation
 import Accelerate
 
-var str = "Hello, playground"
-
-
-/***************************** 3 TASK ********************/
-
-//helpers
-
-enum MeasurementUnit:Double{
-    case kilometers = 1000.0
-    case landMiles = 1609.344
-    
-}
-
-extension Double {
-    func deg2rad() -> Double{
-        let toRad = M_PI/180
-        
-        return self * toRad;
-    }
-    
-    func convertMetersTo(unit: MeasurementUnit) -> Double{
-        return self/unit.rawValue
-    }
-    
-}
-
-
-func R(lat:Double) -> Double {
-    
-    return 6378 - 21 * sin(lat) //good enough
-}
-
-func haversine(Φ1:Double,Φ2:Double,λ1:Double,λ2:Double) -> Double {
-    var d = 0.0
-    
-    
-    var dλ = (λ2-λ1).deg2rad()
-    var dΦ = abs(Φ2-Φ1).deg2rad()
-    var λ1inRad = λ1.deg2rad()
-    var λ2inRad = λ2.deg2rad()
-    
-    var a = pow(sin(dλ/2),2) + cos(λ1inRad)*cos(λ2inRad) * pow(sin(dΦ/2),2)
-    
-    var c = 2 * asin(min(1,sqrt(a)))
-    
-    d = c * R(λ1inRad)
-    return d
-}
-
-func whichObjectsStoredIn(#array:[PointOfInterest],#from:PointOfInterest, #areInMyDistance:Double=500)->[PointOfInterest]{
-    
-    var closeEnough:[PointOfInterest] = []
-    
-    //closure
-    var isClose = array.map({(point:PointOfInterest) -> Bool in
-        var indexes:Bool = false
-        
-        if (point.coordinates.distanceBetweenCoordinates(point.coordinates, bCoordinate: from.coordinates) < areInMyDistance.convertMetersTo(.kilometers)) {
-            indexes = true
-        }
-        return indexes
-    })
-    
-    for i in 0...isClose.count-1 {
-        if(isClose[i] && array[i].name != from.name){
-            closeEnough.append(array[i])
-        }
-    }
-    return closeEnough
-}
-
-/****************************** FROM 1 task ****************/
 struct Address {
     var street:String
     var city:String
@@ -93,7 +21,7 @@ struct Coordinate{
         return "\(latitude), \(longtitude) "
     }
     
-    func distanceBetweenCoordinates(aCoordinate: Coordinate,bCoordinate: Coordinate) -> Double {
+    static func distanceBetweenCoordinates(aCoordinate: Coordinate,bCoordinate: Coordinate) -> Double {
         
         return haversine(aCoordinate.latitude, bCoordinate.latitude, aCoordinate.longtitude,bCoordinate.longtitude)
         
@@ -107,7 +35,7 @@ class PointOfInterest {
     var coordinates: Coordinate
     var address:Address
     
-
+    
     init(name: String, address: Address, coordinates: Coordinate){
         self.coordinates = coordinates
         self.address = address
@@ -128,25 +56,90 @@ class PointOfInterest {
 }
 
 
+//helpers
+
+enum MeasurementUnit:Double{
+    case kilometers = 1000.0
+    case landMiles = 1609.344
+    
+}
+
+extension Double {
+    
+    func deg2rad() -> Double{
+        let toRad = M_PI/180
+        
+        return self * toRad;
+    }
+    
+    func convertMetersTo(unit: MeasurementUnit) -> Double{
+        return self/unit.rawValue
+    }
+    
+}
+
+/*
+http://en.wikipedia.org/wiki/Earth_radius
+Mean radius
+The International Union of Geodesy and Geophysics (IUGG) defines the mean radius (denoted R_1) to be:
+
+a = 6,378.1370 //equatorial raidus in km
+b = 6,356.7523 // polar radius in km
+
+R_1 = (2a+b)/3
+R_1 =  6371.009
+
+*/
+func R(λ:Double) -> Double {
+    var sin2λ = sin(λ)*sin(λ)
+    
+    
+    var R_2 = 6378 - 21 * sin(λ)
+    var R_1 = 6371.009
+    return R_1
+    //return R_2
+}
+/*
+http://www.movable-type.co.uk/scripts/gis-faq-5.1.html
+*/
+func haversine(Φ1:Double,Φ2:Double,λ1:Double,λ2:Double) -> Double {
+    var d = 0.0
+    
+    
+    var dλ = (λ2-λ1).deg2rad()
+    var dΦ = abs(Φ2-Φ1).deg2rad()
+    var λ1inRad = λ1.deg2rad()
+    var λ2inRad = λ2.deg2rad()
+    
+    var a = pow(sin(dλ/2),2) + cos(λ1inRad)*cos(λ2inRad) * pow(sin(dΦ/2),2)
+    
+    var c = 2 * asin(min(1,sqrt(a)))
+    
+    d = c * R(λ1inRad)
+    return d
+}
+
+
 
 /******************** Usage Example  *********************************/
 
-var CenterOfUniverse = PointOfInterest(name:"BLStream Office", coordinates:Coordinate(latitude: 53.429204,  longtitude: 14.556324), address:Address(street: "Małopolska 10", city: "Szczecin", country: "PL"))
 
-var EdgeOfWord = PointOfInterest(name:"TechnoPark Pomerania", coordinates:Coordinate(latitude: 53.449227,  longtitude: 14.537591), address:Address(street: "Niemierzynska 17", city: "Szczecin", country: "PL"))
-
-var Where2SpendMoney = PointOfInterest(name:"CH Kaskada", coordinates:Coordinate(latitude: 53.428494, longtitude: 14.551453), address:Address(street: "Niepodległości 36", city: "Szczecin", country: "PL"))
-
-
-var Food = PointOfInterest(name:"MakKwak", coordinates:Coordinate(latitude: 53.428878, longtitude: 14.554291), address:Address(street: "Plac Żołnierza Polskiego 17", city: "Szczecin", country: "PL"))
-
-var importantPoints:[PointOfInterest] = [CenterOfUniverse,EdgeOfWord,Where2SpendMoney,Food]
+var importantPoints:[PointOfInterest] = [
+    PointOfInterest(name:"BLStream Office", coordinates:Coordinate(latitude: 53.429204,  longtitude: 14.556324), address:Address(street: "Małopolska 10", city: "Szczecin", country: "PL")),
+    PointOfInterest(name:"TechnoPark Pomerania", coordinates:Coordinate(latitude: 53.449227,  longtitude: 14.537591), address:Address(street: "Niemierzynska 17", city: "Szczecin", country: "PL")),
+    PointOfInterest(name:"CH Kaskada", coordinates:Coordinate(latitude: 53.428494, longtitude: 14.551453), address:Address(street: "Niepodległości 36", city: "Szczecin", country: "PL")),
+    PointOfInterest(name:"MakKwak", coordinates:Coordinate(latitude: 53.428878, longtitude: 14.554291), address:Address(street: "Plac Żołnierza Polskiego 17", city: "Szczecin", country: "PL"))
+]
 
 
-var meters:Double = 500.0
-var whereCanIGo:[PointOfInterest] = whichObjectsStoredIn(array:importantPoints,from:CenterOfUniverse,areInMyDistance:meters)
+var rangeInMeters:Double = 500.0
 
-for poi in whereCanIGo{
-    print("You can go to \(poi.name) at \(poi.address.toString())")
+//closure
+var inMyRange = importantPoints.filter({(point:PointOfInterest) -> Bool in
+    
+    return (Coordinate.distanceBetweenCoordinates(point.coordinates, bCoordinate: importantPoints[0].coordinates) < rangeInMeters.convertMetersTo(.kilometers) && point.name != importantPoints[0].name)
+})
+
+for poi in inMyRange{
+    print("You can go to \(poi.name) at \(poi.address.toString()) \n")
 }
-
