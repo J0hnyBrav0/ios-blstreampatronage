@@ -1,1 +1,1 @@
-zadanie 1 i zadanie 2.
+zadania 1,2 i 3. 
