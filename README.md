@@ -1,1 +1,3 @@
-zadania 1,2 i 3. 
+zadania 1,2 i 3.
+
+gorące.
