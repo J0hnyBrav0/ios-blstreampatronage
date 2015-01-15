@@ -22,11 +22,13 @@ struct Coordinate{
     }
     
     static func distanceBetweenCoordinates(aCoordinate: Coordinate,bCoordinate: Coordinate) -> Double {
+
+       return haversine(aCoordinate.latitude, bCoordinate.latitude, aCoordinate.longtitude,bCoordinate.longtitude)
         
-        return haversine(aCoordinate.latitude, bCoordinate.latitude, aCoordinate.longtitude,bCoordinate.longtitude)
-        
-        
-    }
+//        
+//        return  haversineBLS(aCoordinate.latitude, bCoordinate.latitude, aCoordinate.longtitude,bCoordinate.longtitude)
+//        
+   }
 }
 
 
@@ -96,36 +98,58 @@ func R(λ:Double) -> Double {
     
     var R_2 = 6378 - 21 * sin(λ)
     var R_1 = 6371.009
-    return R_1
+    return R_2
     //return R_2
 }
 /*
 http://www.movable-type.co.uk/scripts/gis-faq-5.1.html
 */
+
 func haversine(Φ1:Double,Φ2:Double,λ1:Double,λ2:Double) -> Double {
     var d = 0.0
-    
+    //Φ - latitude
+    //λ - longitude
     
     var dλ = (λ2-λ1).deg2rad()
-    var dΦ = abs(Φ2-Φ1).deg2rad()
-    var λ1inRad = λ1.deg2rad()
-    var λ2inRad = λ2.deg2rad()
+    var dΦ = (Φ2-Φ1).deg2rad()
+    var Φ1inRad = Φ1.deg2rad()
+    var Φ2inRad = Φ2.deg2rad()
     
-    var a = pow(sin(dλ/2),2) + cos(λ1inRad)*cos(λ2inRad) * pow(sin(dΦ/2),2)
     
-    var c = 2 * asin(min(1,sqrt(a)))
+    var a = pow(sin(dΦ/2),2) + cos(Φ1inRad)*cos(Φ2inRad) * pow(sin(dλ/2),2)
     
-    d = c * R(λ1inRad)
+    var c = 2 * asin(sqrt(a))
+    
+    d = c * R(λ1.deg2rad())
     return d
+}
+func haversineBLS(aLatitude:Double,bLatitude:Double,aLongitude:Double,bLongitude:Double) -> Double {
+    var d = 0.0
+    
+    var radianLatitude = (bLatitude-aLatitude).deg2rad()
+    var radianLongitude = (bLongitude-aLongitude).deg2rad()
+    var aLatitudeRad = aLatitude.deg2rad()
+    var bLatitudeRad = bLatitude.deg2rad()
+    
+    var a = pow(sin(radianLatitude/2.0),2) + cos(aLatitudeRad)*cos(bLatitudeRad) * pow(sin(radianLongitude/2.0),2)
+    
+    let c = 2.0 * atan2(sqrt(a), sqrt(1.0 - a))
+    
+    d = c * 6371
+    println("hav 3")
+    println(a)
+    println(d)
+    return d * 1000
 }
 
 
 
 /******************** Usage Example  *********************************/
 
+var p1 =  PointOfInterest(name:"BLStream Office", coordinates:Coordinate(latitude: 53.429204,  longtitude: 14.556324), address:Address(street: "Małopolska 10", city: "Szczecin", country: "PL"))
 
-var importantPoints:[PointOfInterest] = [
-    PointOfInterest(name:"BLStream Office", coordinates:Coordinate(latitude: 53.429204,  longtitude: 14.556324), address:Address(street: "Małopolska 10", city: "Szczecin", country: "PL")),
+var importantPoints:[PointOfInterest] = [ p1
+   ,
     PointOfInterest(name:"TechnoPark Pomerania", coordinates:Coordinate(latitude: 53.449227,  longtitude: 14.537591), address:Address(street: "Niemierzynska 17", city: "Szczecin", country: "PL")),
     PointOfInterest(name:"CH Kaskada", coordinates:Coordinate(latitude: 53.428494, longtitude: 14.551453), address:Address(street: "Niepodległości 36", city: "Szczecin", country: "PL")),
     PointOfInterest(name:"MakKwak", coordinates:Coordinate(latitude: 53.428878, longtitude: 14.554291), address:Address(street: "Plac Żołnierza Polskiego 17", city: "Szczecin", country: "PL"))
@@ -137,7 +161,7 @@ var rangeInMeters:Double = 500.0
 //closure
 var inMyRange = importantPoints.filter({(point:PointOfInterest) -> Bool in
     
-    return (Coordinate.distanceBetweenCoordinates(point.coordinates, bCoordinate: importantPoints[0].coordinates) < rangeInMeters.convertMetersTo(.kilometers) && point.name != importantPoints[0].name)
+    return (Coordinate.distanceBetweenCoordinates(point.coordinates, bCoordinate: p1.coordinates) < rangeInMeters.convertMetersTo(.kilometers) && point.name != p1.name)
 })
 
 for poi in inMyRange{
