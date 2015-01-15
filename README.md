@@ -2,6 +2,8 @@ Ocena zadań:
 
 
 -----------------------------zad 1---------------------------------------------------------------
+
+
 Hello,
 
 Dziekujemy za nadeslanie rozwiazania pierwszego zadania. Zadanie wykonane dobrze, jedyna uwaga dotyczy uzycia protokolow. W tym przypadku definiowanie protokolow jest nadmiarowe, skoro tylko jedna klasa/struktura implementuje kazdy z protokolow oraz nigdzie protokol nie jest jawnie uzywany.
@@ -10,13 +12,19 @@ Gratulacje i witamy w drugiej turze. Juz za chwile dolaczymy Cie do grupy na goo
 
 Br,
 Sebastian
+
+
 ----------------------------zad 2----------------------------------------------------------------
 Hej,
 
 Zadanie wykonane bardzo dobrze 5/5
 
 Gratuluję i witamy w kolejnym etapie 
+
+
 -----------------------------zad 3 ---------------------------------------------------------------
+
+
 Hello,
 
 Dziekujemy za nadeslanie rozwiazania zadania numer 3. Ponizej znajdziesz uwagi do nadeslanego kodu. Niestety jakosc nadeslanego rozwiazania nie pozwala nam na zaproszenie Cie do glownego etapu programu Patronage 2015. Dziekujemy za probe i zapraszamy ponownie za rok.
